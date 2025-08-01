@@ -121,16 +121,20 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
+      <header className="bg-black border-b border-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <FileText className="h-8 w-8 text-blue-600 mr-3" />
+              <img 
+                src="https://www.e-auditoria.com.br/wp-content/uploads/2022/02/logo-eauditoria-branco.png" 
+                alt="e-Auditoria" 
+                className="h-8 mr-3"
+              />
               <div>
-                <h1 className="text-xl font-bold text-slate-800">
+                <h1 className="text-xl font-bold text-white">
                   Gerador de Artigos e-Auditoria
                 </h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-gray-300">
                   Base de Conhecimento Zendesk
                 </p>
               </div>
