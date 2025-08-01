@@ -1,6 +1,6 @@
 import React from 'react';
 import { EditorMode } from '../types';
-import { Copy, Send, Edit3, Eye, Bold, Italic, List, Type } from 'lucide-react';
+import { Copy, Send, Edit3, Eye, Bold, Italic, List, Type, Hash, Link } from 'lucide-react';
 
 interface EditorSectionProps {
   content: string;
@@ -45,8 +45,24 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
       case 'h2':
         newText = content.substring(0, start) + `## ${selectedText}` + content.substring(end);
         break;
+      case 'h3':
+        newText = content.substring(0, start) + `### ${selectedText}` + content.substring(end);
+        break;
+      case 'h4':
+        newText = content.substring(0, start) + `#### ${selectedText}` + content.substring(end);
+        break;
       case 'list':
         newText = content.substring(0, start) + `- ${selectedText}` + content.substring(end);
+        break;
+      case 'numbered-list':
+        newText = content.substring(0, start) + `1. ${selectedText}` + content.substring(end);
+        break;
+      case 'link':
+        if (selectedText) {
+          newText = content.substring(0, start) + `[${selectedText}](url)` + content.substring(end);
+        } else {
+          newText = content.substring(0, start) + `[texto do link](url)` + content.substring(end);
+        }
         break;
     }
 
@@ -58,10 +74,20 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
       .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4 text-slate-800">$1</h1>')
       .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mb-3 text-slate-700">$1</h2>')
       .replace(/^### (.*$)/gm, '<h3 class="text-lg font-medium mb-2 text-slate-600">$1</h3>')
+      .replace(/^#### (.*$)/gm, '<h4 class="text-base font-medium mb-2 text-slate-600">$1</h4>')
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">$1</a>')
       .replace(/^- (.*$)/gm, '<li class="ml-4">$1</li>')
+      .replace(/^\d+\. (.*$)/gm, '<li class="ml-4">$1</li>')
       .replace(/(<li.*<\/li>)/s, '<ul class="list-disc mb-4">$1</ul>')
+      .replace(/(<li class="ml-4">.*<\/li>)/s, (match) => {
+        // Se contém números no início, é lista numerada
+        if (content.includes('1. ')) {
+          return match.replace('<ul class="list-disc mb-4">', '<ol class="list-decimal mb-4">');
+        }
+        return match;
+      })
       .replace(/\n\n/g, '</p><p class="mb-4">')
       .replace(/^(?!<[h|u|l])(.+)$/gm, '<p class="mb-4">$1</p>');
   };
@@ -127,6 +153,20 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
             >
               H2
             </button>
+            <button
+              onClick={() => applyFormatting('h3')}
+              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors text-sm font-bold"
+              title="Título H3"
+            >
+              H3
+            </button>
+            <button
+              onClick={() => applyFormatting('h4')}
+              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors text-sm font-bold"
+              title="Título H4"
+            >
+              H4
+            </button>
             <div className="w-px h-6 bg-slate-300 mx-1"></div>
             <button
               onClick={() => applyFormatting('list')}
@@ -134,6 +174,21 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
               title="Lista"
             >
               <List className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => applyFormatting('numbered-list')}
+              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors"
+              title="Lista Numerada"
+            >
+              <Hash className="w-4 h-4" />
+            </button>
+            <div className="w-px h-6 bg-slate-300 mx-1"></div>
+            <button
+              onClick={() => applyFormatting('link')}
+              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors"
+              title="Link"
+            >
+              <Link className="w-4 h-4" />
             </button>
           </div>
         )}
