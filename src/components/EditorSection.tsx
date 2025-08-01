@@ -57,7 +57,7 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
   };
 
   return (
-    <div className="bg-white h-full flex flex-col">
+    <div className="bg-white h-full flex flex-col min-h-[calc(100vh-20rem)] lg:min-h-full">
       {/* Header */}
       <div className="p-6 border-b border-slate-200">
         <div className="flex items-center justify-between">
@@ -66,9 +66,9 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 p-6 min-h-[calc(100vh-28rem)] lg:min-h-0">
         {!hasContent ? (
-          <div className="h-full flex items-center justify-center text-center">
+          <div className="min-h-[20rem] lg:h-full flex items-center justify-center text-center">
             <div>
               <Type className="w-12 h-12 text-slate-300 mx-auto mb-4" />
               <p className="text-slate-500 text-lg">Preencha o formulário e gere um artigo</p>
@@ -76,15 +76,15 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
             </div>
           </div>
         ) : (
-          <div className="h-full">
+          <div className="min-h-[20rem] lg:h-full">
             <ReactQuill
               theme="snow"
               value={content}
               onChange={onContentChange}
               modules={modules}
               formats={formats}
-              style={{ height: 'calc(100% - 42px)' }}
-              className="h-full"
+              style={{ height: window.innerWidth < 1024 ? '20rem' : 'calc(100% - 42px)' }}
+              className="h-full lg:h-full"
             />
           </div>
         )}
