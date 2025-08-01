@@ -141,10 +141,10 @@ function App() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8 lg:h-[calc(100vh-12rem)]">
+      <main className="h-[calc(100vh-4rem)]">
+        <div className="flex flex-col lg:flex-row h-full">
           {/* Form Section */}
-          <div className="lg:w-2/5 lg:h-full lg:overflow-y-auto">
+          <div className="lg:w-2/5 h-full lg:overflow-y-auto">
             <FormSection
               formData={formData}
               webhookConfig={webhookConfig}
@@ -156,7 +156,7 @@ function App() {
           </div>
 
           {/* Editor Section */}
-          <div id="editor-section" className="lg:w-3/5 lg:h-full">
+          <div id="editor-section" className="lg:w-3/5 h-full">
             <EditorSection
               content={content}
               isPublishing={loadingStates.publishing}

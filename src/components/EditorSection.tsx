@@ -57,7 +57,7 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-full flex flex-col">
+    <div className="bg-white h-full flex flex-col">
       {/* Header */}
       <div className="p-6 border-b border-slate-200">
         <div className="flex items-center justify-between">

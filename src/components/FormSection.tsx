@@ -29,7 +29,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
   const isFormValid = formData.topic && formData.description && formData.audience && formData.format;
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-200">
+    <div className="bg-white h-full p-8 border-r border-gray-200">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Configuração do Artigo</h2>
       
       {/* Campos Obrigatórios */}
