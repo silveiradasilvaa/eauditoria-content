@@ -4,8 +4,7 @@ import { EditorSection } from './components/EditorSection';
 import { Toast } from './components/Toast';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { generateArticle, publishToZendesk } from './services/api';
-import { ArticleFormData, WebhookConfig, EditorMode, LoadingStates, ErrorStates } from './types';
-import { FileText } from 'lucide-react';
+import { ArticleFormData, WebhookConfig, LoadingStates, ErrorStates } from './types';
 
 function App() {
   const [formData, setFormData] = useState<ArticleFormData>({
@@ -22,7 +21,6 @@ function App() {
   });
 
   const [content, setContent] = useState<string>('');
-  const [editorMode, setEditorMode] = useState<EditorMode>('edit');
   
   const [loadingStates, setLoadingStates] = useState<LoadingStates>({
     generating: false,
@@ -58,7 +56,6 @@ function App() {
     try {
       const generatedContent = await generateArticle(formData, webhookConfig.generateUrl);
       setContent(generatedContent);
-      setEditorMode('edit');
       showToast('Artigo gerado com sucesso!', 'success');
       
       // Scroll para o editor no mobile
@@ -145,9 +142,9 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:h-[calc(100vh-12rem)]">
+        <div className="flex flex-col lg:flex-row gap-8 lg:h-[calc(100vh-12rem)]">
           {/* Form Section */}
-          <div className="lg:h-full lg:overflow-y-auto">
+          <div className="lg:w-2/5 lg:h-full lg:overflow-y-auto">
             <FormSection
               formData={formData}
               webhookConfig={webhookConfig}
@@ -159,14 +156,12 @@ function App() {
           </div>
 
           {/* Editor Section */}
-          <div id="editor-section" className="lg:h-full">
+          <div id="editor-section" className="lg:w-3/5 lg:h-full">
             <EditorSection
               content={content}
-              mode={editorMode}
               isPublishing={loadingStates.publishing}
               hasContent={!!content.trim()}
               onContentChange={setContent}
-              onModeChange={setEditorMode}
               onCopy={handleCopy}
               onPublish={handlePublish}
             />

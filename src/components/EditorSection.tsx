@@ -1,27 +1,22 @@
 import React from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { EditorMode } from '../types';
-import { Copy, Send, Edit3, Eye, Type } from 'lucide-react';
+import { Copy, Send, Type } from 'lucide-react';
 
 interface EditorSectionProps {
   content: string;
-  mode: EditorMode;
   isPublishing: boolean;
   hasContent: boolean;
   onContentChange: (content: string) => void;
-  onModeChange: (mode: EditorMode) => void;
   onCopy: () => void;
   onPublish: () => void;
 }
 
 export const EditorSection: React.FC<EditorSectionProps> = ({
   content,
-  mode,
   isPublishing,
   hasContent,
   onContentChange,
-  onModeChange,
   onCopy,
   onPublish
 }) => {
@@ -67,27 +62,6 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
       <div className="p-6 border-b border-slate-200">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-slate-800">Editor de Artigo</h2>
-          
-          {hasContent && (
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => onModeChange(mode === 'edit' ? 'preview' : 'edit')}
-                className="flex items-center px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
-              >
-                {mode === 'edit' ? (
-                  <>
-                    <Eye className="w-4 h-4 mr-1" />
-                    Preview
-                  </>
-                ) : (
-                  <>
-                    <Edit3 className="w-4 h-4 mr-1" />
-                    Editar
-                  </>
-                )}
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
@@ -101,7 +75,7 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
               <p className="text-slate-400 text-sm mt-2">O artigo gerado aparecerá aqui para edição</p>
             </div>
           </div>
-        ) : mode === 'edit' ? (
+        ) : (
           <div className="h-full">
             <ReactQuill
               theme="snow"
@@ -113,11 +87,6 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
               className="h-full"
             />
           </div>
-        ) : (
-          <div 
-            className="h-full overflow-y-auto prose prose-slate max-w-none p-4 border border-slate-200 rounded-lg bg-slate-50"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
         )}
       </div>
 

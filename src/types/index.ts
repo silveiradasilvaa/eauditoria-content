@@ -16,8 +16,6 @@ export interface ZendeskPayload extends ArticleFormData {
   final_article: string;
 }
 
-export type EditorMode = 'edit' | 'preview';
-
 export interface LoadingStates {
   generating: boolean;
   publishing: boolean;
