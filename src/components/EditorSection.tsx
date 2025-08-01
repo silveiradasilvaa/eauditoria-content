@@ -1,6 +1,8 @@
 import React from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import { EditorMode } from '../types';
-import { Copy, Send, Edit3, Eye, Bold, Italic, List, Type, Hash, Link } from 'lucide-react';
+import { Copy, Send, Edit3, Eye, Type } from 'lucide-react';
 
 interface EditorSectionProps {
   content: string;
@@ -23,79 +25,40 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
   onCopy,
   onPublish
 }) => {
-  const applyFormatting = (format: string) => {
-    const textarea = document.getElementById('article-editor') as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = content.substring(start, end);
-    let newText = content;
-
-    switch (format) {
-      case 'bold':
-        newText = content.substring(0, start) + `**${selectedText}**` + content.substring(end);
-        break;
-      case 'italic':
-        newText = content.substring(0, start) + `*${selectedText}*` + content.substring(end);
-        break;
-      case 'h1':
-        newText = content.substring(0, start) + `# ${selectedText}` + content.substring(end);
-        break;
-      case 'h2':
-        newText = content.substring(0, start) + `## ${selectedText}` + content.substring(end);
-        break;
-      case 'h3':
-        newText = content.substring(0, start) + `### ${selectedText}` + content.substring(end);
-        break;
-      case 'h4':
-        newText = content.substring(0, start) + `#### ${selectedText}` + content.substring(end);
-        break;
-      case 'list':
-        newText = content.substring(0, start) + `- ${selectedText}` + content.substring(end);
-        break;
-      case 'numbered-list':
-        newText = content.substring(0, start) + `1. ${selectedText}` + content.substring(end);
-        break;
-      case 'link':
-        if (selectedText) {
-          newText = content.substring(0, start) + `[${selectedText}](url)` + content.substring(end);
-        } else {
-          newText = content.substring(0, start) + `[texto do link](url)` + content.substring(end);
-        }
-        break;
-    }
-
-    onContentChange(newText);
+  // Configuração da barra de ferramentas do Quill
+  const modules = {
+    toolbar: [
+      [{ 'header': [1, 2, 3, 4, false] }],
+      ['bold', 'italic', 'underline'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+      ['link'],
+      ['blockquote', 'code-block'],
+      [{ 'align': [] }],
+      ['clean']
+    ],
   };
 
-  const renderMarkdown = (text: string) => {
-    return text
-      .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4 text-slate-800">$1</h1>')
-      .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mb-3 text-slate-700">$1</h2>')
-      .replace(/^### (.*$)/gm, '<h3 class="text-lg font-medium mb-2 text-slate-600">$1</h3>')
-      .replace(/^#### (.*$)/gm, '<h4 class="text-base font-medium mb-2 text-slate-600">$1</h4>')
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">$1</a>')
-      // Processar listas numeradas primeiro
-      .replace(/^(\d+\. .*$(?:\n\d+\. .*$)*)/gm, (match) => {
-        const items = match.split('\n').map(line => {
-          const content = line.replace(/^\d+\. /, '');
-          return `<li>${content}</li>`;
-        }).join('');
-        return `<ol class="list-decimal ml-6 mb-4">${items}</ol>`;
-      })
-      // Processar listas com marcadores
-      .replace(/^(- .*$(?:\n- .*$)*)/gm, (match) => {
-        const items = match.split('\n').map(line => {
-          const content = line.replace(/^- /, '');
-          return `<li>${content}</li>`;
-        }).join('');
-        return `<ul class="list-disc ml-6 mb-4">${items}</ul>`;
-      })
-      .replace(/\n\n/g, '</p><p class="mb-4">')
-      .replace(/^(?!<[h|u|l])(.+)$/gm, '<p class="mb-4">$1</p>');
+  const formats = [
+    'header', 'bold', 'italic', 'underline',
+    'list', 'bullet', 'link', 'blockquote', 
+    'code-block', 'align'
+  ];
+
+  // Função para copiar apenas o texto limpo (sem HTML)
+  const handleCopy = async () => {
+    try {
+      // Cria um elemento temporário para extrair apenas o texto
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = content;
+      const textContent = tempDiv.textContent || tempDiv.innerText || '';
+      
+      await navigator.clipboard.writeText(textContent);
+      onCopy();
+    } catch (error) {
+      // Fallback: copia o HTML mesmo
+      await navigator.clipboard.writeText(content);
+      onCopy();
+    }
   };
 
   return (
@@ -126,78 +89,6 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
             </div>
           )}
         </div>
-
-        {/* Toolbar */}
-        {hasContent && mode === 'edit' && (
-          <div className="flex items-center space-x-1 mt-4 p-2 bg-slate-50 rounded-lg">
-            <button
-              onClick={() => applyFormatting('bold')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors"
-              title="Negrito"
-            >
-              <Bold className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => applyFormatting('italic')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors"
-              title="Itálico"
-            >
-              <Italic className="w-4 h-4" />
-            </button>
-            <div className="w-px h-6 bg-slate-300 mx-1"></div>
-            <button
-              onClick={() => applyFormatting('h1')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors text-sm font-bold"
-              title="Título H1"
-            >
-              H1
-            </button>
-            <button
-              onClick={() => applyFormatting('h2')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors text-sm font-bold"
-              title="Título H2"
-            >
-              H2
-            </button>
-            <button
-              onClick={() => applyFormatting('h3')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors text-sm font-bold"
-              title="Título H3"
-            >
-              H3
-            </button>
-            <button
-              onClick={() => applyFormatting('h4')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors text-sm font-bold"
-              title="Título H4"
-            >
-              H4
-            </button>
-            <div className="w-px h-6 bg-slate-300 mx-1"></div>
-            <button
-              onClick={() => applyFormatting('list')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors"
-              title="Lista"
-            >
-              <List className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => applyFormatting('numbered-list')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors"
-              title="Lista Numerada"
-            >
-              <Hash className="w-4 h-4" />
-            </button>
-            <div className="w-px h-6 bg-slate-300 mx-1"></div>
-            <button
-              onClick={() => applyFormatting('link')}
-              className="p-2 text-slate-600 hover:text-slate-800 hover:bg-white rounded transition-colors"
-              title="Link"
-            >
-              <Link className="w-4 h-4" />
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Content Area */}
@@ -211,17 +102,21 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
             </div>
           </div>
         ) : mode === 'edit' ? (
-          <textarea
-            id="article-editor"
-            value={content}
-            onChange={(e) => onContentChange(e.target.value)}
-            className="w-full h-full border border-slate-300 rounded-lg p-4 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all font-mono text-sm"
-            placeholder="Seu artigo aparecerá aqui..."
-          />
+          <div className="h-full">
+            <ReactQuill
+              theme="snow"
+              value={content}
+              onChange={onContentChange}
+              modules={modules}
+              formats={formats}
+              style={{ height: 'calc(100% - 42px)' }}
+              className="h-full"
+            />
+          </div>
         ) : (
           <div 
-            className="h-full overflow-y-auto prose prose-slate max-w-none"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+            className="h-full overflow-y-auto prose prose-slate max-w-none p-4 border border-slate-200 rounded-lg bg-slate-50"
+            dangerouslySetInnerHTML={{ __html: content }}
           />
         )}
       </div>
@@ -231,7 +126,7 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
         <div className="p-6 border-t border-slate-200">
           <div className="flex space-x-3">
             <button
-              onClick={onCopy}
+              onClick={handleCopy}
               className="flex-1 flex items-center justify-center px-4 py-3 border border-slate-300 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition-colors"
             >
               <Copy className="w-4 h-4 mr-2" />
