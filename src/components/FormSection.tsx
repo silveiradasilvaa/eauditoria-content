@@ -142,7 +142,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
       </div>
 
       {/* Botão Gerar */}
-      <div className="mt-8 pt-4">
+      <div className="mt-8 pt-8">
         <button
           onClick={onGenerate}
           disabled={!isFormValid || isGenerating}
