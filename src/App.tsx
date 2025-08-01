@@ -18,7 +18,7 @@ function App() {
 
   const [webhookConfig, setWebhookConfig] = useLocalStorage<WebhookConfig>('eauditoria-webhooks', {
     generateUrl: 'https://n8n.flap.studio/webhook/eauditoria/generate-content',
-    zendeskUrl: 'https://n8n.flap.studio/webhook-test/eauditoria/send-zendesk',
+    zendeskUrl: 'https://n8n.flap.studio/webhook/eauditoria/send-zendesk',
   });
 
   const [content, setContent] = useState<string>('');
@@ -60,6 +60,17 @@ function App() {
       setContent(generatedContent);
       setEditorMode('edit');
       showToast('Artigo gerado com sucesso!', 'success');
+      
+      // Scroll para o editor no mobile
+      const editorSection = document.getElementById('editor-section');
+      if (editorSection && window.innerWidth < 1024) {
+        setTimeout(() => {
+          editorSection.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+          });
+        }, 100);
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido na geração';
       showToast(errorMessage, 'error');
@@ -130,9 +141,9 @@ function App() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-12rem)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:h-[calc(100vh-12rem)]">
           {/* Form Section */}
-          <div className="h-full overflow-y-auto">
+          <div className="lg:h-full lg:overflow-y-auto">
             <FormSection
               formData={formData}
               webhookConfig={webhookConfig}
@@ -144,7 +155,7 @@ function App() {
           </div>
 
           {/* Editor Section */}
-          <div className="h-full">
+          <div id="editor-section" className="lg:h-full">
             <EditorSection
               content={content}
               mode={editorMode}

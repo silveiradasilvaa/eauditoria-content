@@ -113,7 +113,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
       </div>
 
       {/* Configuração de Webhooks */}
-      <div className="mt-8 pt-8 border-t border-slate-200">
+      <div className="mt-8 pt-8 border-t border-slate-200" style={{ display: 'none' }}>
         <h3 className="text-lg font-semibold text-slate-800 mb-4">Configuração</h3>
         
         <div className="space-y-4">

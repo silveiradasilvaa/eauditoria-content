@@ -139,15 +139,15 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
               className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 disabled:from-gray-400 disabled:to-gray-500 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl disabled:cursor-not-allowed"
             >
               {isPublishing ? (
-                <div className="flex items-center justify-center">
+                <span className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Publicando...
-                </div>
+                </span>
               ) : (
-                <>
+                <span className="flex items-center justify-center">
                   <Send className="w-4 h-4 mr-2" />
                   Enviar para Zendesk
-                </>
+                </span>
               )}
             </button>
           </div>
