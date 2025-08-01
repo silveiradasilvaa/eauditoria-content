@@ -26,7 +26,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
     onWebhookConfigChange({ ...webhookConfig, [field]: value });
   };
 
-  const isFormValid = formData.topic && formData.description && formData.audience && formData.format;
+  const isFormValid = formData.topic && formData.format;
 
   return (
     <div className="bg-white h-full p-8 border-r border-gray-200">
@@ -50,7 +50,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
-            Descrição/Contexto *
+            Descrição/Contexto
           </label>
           <textarea
             value={formData.description}
@@ -58,19 +58,17 @@ export const FormSection: React.FC<FormSectionProps> = ({
             rows={4}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-vertical"
             placeholder="Descreva o contexto e detalhes do artigo"
-            required
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
-            Público-alvo *
+            Público-alvo
           </label>
           <select
             value={formData.audience}
             onChange={(e) => handleInputChange('audience', e.target.value)}
             className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            required
           >
             <option value="">Selecione o público-alvo</option>
             <option value="Iniciante">Iniciante</option>
@@ -144,7 +142,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
       </div>
 
       {/* Botão Gerar */}
-      <div className="mt-8">
+      <div className="mt-8 pt-4">
         <button
           onClick={onGenerate}
           disabled={!isFormValid || isGenerating}
