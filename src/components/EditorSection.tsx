@@ -78,15 +78,21 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-blue-600 hover:text-blue-800 underline" target="_blank" rel="noopener noreferrer">$1</a>')
-      .replace(/^- (.*$)/gm, '<li class="ml-4">$1</li>')
-      .replace(/^\d+\. (.*$)/gm, '<li class="ml-4">$1</li>')
-      .replace(/(<li.*<\/li>)/s, '<ul class="list-disc mb-4">$1</ul>')
-      .replace(/(<li class="ml-4">.*<\/li>)/s, (match) => {
-        // Se contém números no início, é lista numerada
-        if (content.includes('1. ')) {
-          return match.replace('<ul class="list-disc mb-4">', '<ol class="list-decimal mb-4">');
-        }
-        return match;
+      // Processar listas numeradas primeiro
+      .replace(/^(\d+\. .*$(?:\n\d+\. .*$)*)/gm, (match) => {
+        const items = match.split('\n').map(line => {
+          const content = line.replace(/^\d+\. /, '');
+          return `<li>${content}</li>`;
+        }).join('');
+        return `<ol class="list-decimal ml-6 mb-4">${items}</ol>`;
+      })
+      // Processar listas com marcadores
+      .replace(/^(- .*$(?:\n- .*$)*)/gm, (match) => {
+        const items = match.split('\n').map(line => {
+          const content = line.replace(/^- /, '');
+          return `<li>${content}</li>`;
+        }).join('');
+        return `<ul class="list-disc ml-6 mb-4">${items}</ul>`;
       })
       .replace(/\n\n/g, '</p><p class="mb-4">')
       .replace(/^(?!<[h|u|l])(.+)$/gm, '<p class="mb-4">$1</p>');
