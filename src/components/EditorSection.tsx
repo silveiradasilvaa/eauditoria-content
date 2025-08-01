@@ -76,14 +76,14 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
             </div>
           </div>
         ) : (
-          <div className="min-h-[20rem] lg:h-full">
+          <div className="h-[calc(100vh-32rem)] lg:h-full">
             <ReactQuill
               theme="snow"
               value={content}
               onChange={onContentChange}
               modules={modules}
               formats={formats}
-              style={{ height: window.innerWidth < 1024 ? '20rem' : 'calc(100% - 42px)' }}
+              style={{ height: window.innerWidth < 1024 ? 'calc(100vh - 36rem)' : 'calc(100% - 42px)' }}
               className="h-full lg:h-full"
             />
           </div>
