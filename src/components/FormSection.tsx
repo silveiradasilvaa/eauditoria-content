@@ -33,7 +33,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Configuração do Artigo</h2>
       
       {/* Campos Obrigatórios */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Tema do Artigo *
