@@ -19,6 +19,16 @@ export const generateArticle = async (
 
     const result = await response.json();
     
+    // Se o resultado é um array com objetos que têm 'data'
+    if (Array.isArray(result) && result.length > 0 && result[0].data) {
+      return result[0].data;
+    }
+    
+    // Se o resultado tem uma propriedade 'data', retorna apenas ela
+    if (result && typeof result === 'object' && result.data) {
+      return result.data;
+    }
+    
     // Se o resultado tem uma propriedade 'text', retorna apenas ela
     if (result && typeof result === 'object' && result.text) {
       return result.text;
