@@ -17,7 +17,17 @@ export const generateArticle = async (
       throw new Error(`Erro na geração: ${response.status} ${response.statusText}`);
     }
 
-    const result = await response.json();
+    // Primeiro pega o texto da resposta
+    const responseText = await response.text();
+    
+    // Tenta fazer parse do JSON
+    let result;
+    try {
+      result = JSON.parse(responseText);
+    } catch (parseError) {
+      // Se não conseguir fazer parse, retorna o texto diretamente
+      return responseText;
+    }
     
     // Se o resultado é um array com objetos que têm 'data'
     if (Array.isArray(result) && result.length > 0 && result[0].data) {
@@ -39,8 +49,8 @@ export const generateArticle = async (
       return result;
     }
     
-    // Fallback: converte para string
-    return JSON.stringify(result);
+    // Fallback: retorna o texto original da resposta
+    return responseText;
   } catch (error) {
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error('Erro de conexão. Verifique a URL do webhook e sua conexão com a internet.');
