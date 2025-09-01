@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { FormSection } from './components/FormSection';
 import { EditorSection } from './components/EditorSection';
 import { Toast } from './components/Toast';
+import { SuccessModal } from './components/SuccessModal';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { generateArticle, publishToZendesk } from './services/api';
-import { ArticleFormData, WebhookConfig, LoadingStates, ErrorStates } from './types';
+import { ArticleFormData, WebhookConfig, LoadingStates, ErrorStates, ZendeskArticle } from './types';
 
 function App() {
   const [formData, setFormData] = useState<ArticleFormData>({
@@ -21,6 +22,9 @@ function App() {
   });
 
   const [content, setContent] = useState<string>('');
+  
+  const [publishedArticle, setPublishedArticle] = useState<ZendeskArticle | null>(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   
   const [loadingStates, setLoadingStates] = useState<LoadingStates>({
     generating: false,
@@ -96,8 +100,9 @@ function App() {
         final_article: content,
       };
 
-      await publishToZendesk(payload, webhookConfig.zendeskUrl);
-      showToast('Artigo publicado no Zendesk com sucesso!', 'success');
+      const response = await publishToZendesk(payload, webhookConfig.zendeskUrl);
+      setPublishedArticle(response.article);
+      setShowSuccessModal(true);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido na publicação';
       showToast(errorMessage, 'error');
@@ -112,6 +117,28 @@ function App() {
       showToast('Artigo copiado para a área de transferência', 'success');
     } catch (error) {
       showToast('Erro ao copiar artigo', 'error');
+    }
+  };
+
+  const handleCopyArticleId = async () => {
+    if (publishedArticle) {
+      try {
+        await navigator.clipboard.writeText(publishedArticle.id.toString());
+        showToast('ID do artigo copiado!', 'success');
+      } catch (error) {
+        showToast('Erro ao copiar ID', 'error');
+      }
+    }
+  };
+
+  const handleCopyArticleUrl = async () => {
+    if (publishedArticle) {
+      try {
+        await navigator.clipboard.writeText(publishedArticle.html_url);
+        showToast('URL do artigo copiada!', 'success');
+      } catch (error) {
+        showToast('Erro ao copiar URL', 'error');
+      }
     }
   };
 
@@ -173,6 +200,15 @@ function App() {
         type={toast.type}
         isVisible={toast.isVisible}
         onClose={hideToast}
+      />
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        article={publishedArticle}
+        onClose={() => setShowSuccessModal(false)}
+        onCopyId={handleCopyArticleId}
+        onCopyUrl={handleCopyArticleUrl}
       />
     </div>
   );

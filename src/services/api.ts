@@ -1,4 +1,4 @@
-import { ArticleFormData, ZendeskPayload } from '../types';
+import { ArticleFormData, ZendeskPayload, ZendeskResponse } from '../types';
 
 export const generateArticle = async (
   data: ArticleFormData, 
@@ -62,7 +62,7 @@ export const generateArticle = async (
 export const publishToZendesk = async (
   data: ZendeskPayload,
   webhookUrl: string  
-): Promise<void> => {
+): Promise<ZendeskResponse> => {
   try {
     const response = await fetch(webhookUrl, {
       method: 'POST',
@@ -74,6 +74,26 @@ export const publishToZendesk = async (
 
     if (!response.ok) {
       throw new Error(`Erro na publicação: ${response.status} ${response.statusText}`);
+    }
+
+    const responseText = await response.text();
+    
+    try {
+      const result = JSON.parse(responseText);
+      
+      // Se é um array com objetos que têm 'article'
+      if (Array.isArray(result) && result.length > 0 && result[0].article) {
+        return result[0];
+      }
+      
+      // Se é um objeto direto com 'article'
+      if (result && typeof result === 'object' && result.article) {
+        return result;
+      }
+      
+      throw new Error('Formato de resposta inválido do Zendesk');
+    } catch (parseError) {
+      throw new Error('Erro ao processar resposta do Zendesk');
     }
   } catch (error) {
     if (error instanceof TypeError && error.message.includes('fetch')) {
