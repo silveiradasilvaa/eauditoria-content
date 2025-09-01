@@ -77,9 +77,11 @@ export const publishToZendesk = async (
     }
 
     const responseText = await response.text();
+    console.log('Resposta do Zendesk:', responseText); // Debug
     
     try {
       const result = JSON.parse(responseText);
+      console.log('Resultado parseado:', result); // Debug
       
       // Se é um array com objetos que têm 'article'
       if (Array.isArray(result) && result.length > 0 && result[0].article) {
@@ -91,8 +93,11 @@ export const publishToZendesk = async (
         return result;
       }
       
+      console.error('Estrutura de resposta não reconhecida:', result);
       throw new Error('Formato de resposta inválido do Zendesk');
     } catch (parseError) {
+      console.error('Erro ao fazer parse da resposta:', parseError);
+      console.error('Texto da resposta:', responseText);
       throw new Error('Erro ao processar resposta do Zendesk');
     }
   } catch (error) {
