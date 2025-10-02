@@ -17,8 +17,8 @@ function App() {
   });
 
   const [webhookConfig, setWebhookConfig] = useLocalStorage<WebhookConfig>('eauditoria-webhooks', {
-    generateUrl: 'https://n8n.flap.studio/webhook/eauditoria/generate-content',
-    zendeskUrl: 'https://n8n.flap.studio/webhook/eauditoria/send-zendesk',
+    generateUrl: 'https://n8n.e-auditoria.com.br/webhook/generate-content',
+    zendeskUrl: 'https://n8n.e-auditoria.com.br/webhook/send-zendesk',
   });
 
   const [content, setContent] = useState<string>('');
